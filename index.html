@@ -9,8 +9,76 @@
 
 <body onload="main()">
   <canvas id="glcanvas" width="800" height="600"></canvas>
-  <script type="text/javascript" src="libs/glUtils.js"></script>
-  <script type="text/javascript" src="index.js"></script>
+  <script>
+    // Get the canvas element
+    const canvas = document.getElementById('glcanvas');
+
+    // initialize WebGL context
+    const gl = canvas.getContext('webgl');
+
+    // compile shaders
+    const vertexShaderSource = `
+      // vertex shader code (GLSL)
+      attribute vec2 a_position;
+      void main() {
+        // transform vertex position
+        gl_Position = vec4(a_position, 0.0, 1.0);
+      }
+      `;
+
+    const fragmentShaderSource = `
+      // Fragment shader code (GLSL)
+      void main() {
+        // Set fragment color
+        gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0); // Fuchsia color
+      }
+    `;
+
+    const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, vertexShaderSource);
+    gl.compileShader(vertexShader);
+
+    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader, fragmentShaderSource);
+    gl.compileShader(fragmentShader);
+
+    // create and link program
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    // set-up attributes
+    const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+    const positionBuffer = gl.createBuffer();
+    const positionData = new Float32Array([
+      -0.5, -0.5,
+      0.5, -0.5,
+      0.5, 0.5,
+      -0.5, -0.5,
+      0.5, -0.5,
+      0.5, 0.5
+    ]);
+
+    // create and bind buffers
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, positionData, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(positionAttributeLocation);
+    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+    // rendering loop
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+
+    function render() {
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.LINES, 0, 6);
+
+      requestAnimationFrame(render);
+    }
+
+    render();
+  </script>
 </body>
 
 </html>
