@@ -1,60 +1,79 @@
 var canvas = document.getElementById('glcanvas');
+/** @type {WebGLRenderingContext} */
 var gl = canvas.getContext('webgl');
 
-// Define the vertices for the cube
-var vertices = [
-    // Front face
-    -0.5, -0.5, 0.5,
-    0.5, -0.5, 0.5,
-    0.5, 0.5, 0.5,
-    -0.5, 0.5, 0.5,
+// Define the vertices for the letter "A" as lines
+var verticesU = [
+    // Left vertical line
+    -0.6, 0.5,
+    -0.6, -0.5,
 
-    // Back face
-    -0.5, -0.5, -0.5,
-    -0.5, 0.5, -0.5,
-    0.5, 0.5, -0.5,
-    0.5, -0.5, -0.5,
+    // Right vertical line
+    -0.6, -0.5,
+    -0.3, -0.5,
 
-    // Top face
-    -0.5, 0.5, -0.5,
-    -0.5, 0.5, 0.5,
-    0.5, 0.5, 0.5,
-    0.5, 0.5, -0.5,
-
-    // Bottom face
-    -0.5, -0.5, -0.5,
-    0.5, -0.5, -0.5,
-    0.5, -0.5, 0.5,
-    -0.5, -0.5, 0.5,
-
-    // Right face
-    0.5, -0.5, -0.5,
-    0.5, 0.5, -0.5,
-    0.5, 0.5, 0.5,
-    0.5, -0.5, 0.5,
-
-    // Left face
-    -0.5, -0.5, -0.5,
-    -0.5, -0.5, 0.5,
-    -0.5, 0.5, 0.5,
-    -0.5, 0.5, -0.5
+    // Horizontal line
+    -0.3, -0.5,
+    -0.3, 0.5
 ];
 
-// Define the indices that make up the cube's faces
-var indices = [
-    0, 1, 2, 0, 2, 3,  // Front face
-    4, 5, 6, 4, 6, 7,  // Back face
-    8, 9, 10, 8, 10, 11,  // Top face
-    12, 13, 14, 12, 14, 15,  // Bottom face
-    16, 17, 18, 16, 18, 19,  // Right face
-    20, 21, 22, 20, 22, 23   // Left face
+// Define the vertices for the letter "B" as lines
+var verticesR = [
+    // Left vertical line
+    -0.15, -0.5,
+    -0.15, 0.5,
+
+    // Top vertical line
+    -0.15, 0.5,
+    0.15, 0.5,
+
+    // Top right vertical line
+    0.15, 0.5,
+    0.15, 0.1,
+
+    // Mid horizontal line
+    0.15, 0.1,
+    -0.15, 0.1,
+
+    // Diagonal line
+    -0.15, 0.1,
+    0.15, -0.5
 ];
+
+// Define the vertices for the letter "C" as lines
+var verticesD = [
+    // Left vertical line
+    0.3, -0.5,
+    0.3, 0.5,
+
+    // Top line
+    0.3, 0.5,
+    0.6, 0.25,
+
+    // Right line
+    0.6, 0.25,
+    0.6, -0.25,
+
+    // Bottom line
+    0.6, -0.25,
+    0.3, -0.5,
+];
+
+// Create and bind vertex buffer
+var vertexBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+
+// Combine all vertices into a single array
+// var allVertices = verticesA.concat(verticesB, verticesC);
+var allVertices = verticesU.concat(verticesR, verticesD);
+
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(allVertices), gl.STATIC_DRAW);
 
 // Create and compile the vertex shader
 var vertexShaderSource = `
-            attribute vec3 aPosition;
+            attribute vec2 aPosition;
             void main(void) {
-                gl_Position = vec4(aPosition, 1.0);
+                gl_Position = vec4(aPosition, 0.0, 1.0);
             }
         `;
 var vertexShader = gl.createShader(gl.VERTEX_SHADER);
@@ -78,22 +97,20 @@ gl.attachShader(shaderProgram, fragmentShader);
 gl.linkProgram(shaderProgram);
 gl.useProgram(shaderProgram);
 
-// Create and bind vertex buffer
-var vertexBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
 // Specify the vertex position attribute
 var positionAttributeLocation = gl.getAttribLocation(shaderProgram, 'aPosition');
 gl.enableVertexAttribArray(positionAttributeLocation);
-gl.vertexAttribPointer(positionAttributeLocation, 3, gl.FLOAT, false, 0, 0);
+gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-// Create and bind index buffer
-var indexBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-
-// Draw the cube
+// Draw the characters as lines
 gl.clearColor(0.0, 0.0, 0.0, 1.0);
 gl.clear(gl.COLOR_BUFFER_BIT);
-gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+
+// Draw character "A"
+gl.drawArrays(gl.LINES, 0, verticesU.length / 2);
+
+// Draw character "B"
+gl.drawArrays(gl.LINES, verticesU.length / 2, verticesR.length / 2);
+
+// Draw character "C"
+gl.drawArrays(gl.LINES, (verticesU.length + verticesR.length) / 2, verticesD.length / 2);
