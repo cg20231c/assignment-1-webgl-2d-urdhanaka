@@ -2,6 +2,10 @@ var canvas = document.getElementById('glcanvas');
 /** @type {WebGLRenderingContext} */
 var gl = canvas.getContext('webgl');
 
+// Define color constant
+const grayHexColor = "#808080";
+const whiteHexColor = "#FFFFFF";
+
 // Define the vertices for the letter "A" as lines
 var verticesU = [
     // Left vertical line
