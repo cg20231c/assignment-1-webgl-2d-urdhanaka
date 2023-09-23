@@ -2,10 +2,6 @@ var canvas = document.getElementById('glcanvas');
 /** @type {WebGLRenderingContext} */
 var gl = canvas.getContext('webgl');
 
-// Define color constant
-const grayHexColor = "#808080";
-const whiteHexColor = "#FFFFFF";
-
 // Define the vertices for the letter "A" as lines
 var verticesU = [
     // Left vertical line
@@ -87,7 +83,7 @@ gl.compileShader(vertexShader);
 // Create and compile the fragment shader
 var fragmentShaderSource = `
             void main(void) {
-                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);  // Red color
+                gl_FragColor = vec4(0.502, 0.502, 0.502, 1.0);  // gray color
             }
         `;
 var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
