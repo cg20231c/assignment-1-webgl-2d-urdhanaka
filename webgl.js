@@ -59,6 +59,14 @@ var verticesD = [
     0.3, -0.5,
 ];
 
+// Define main function
+function main() {
+    while (true) {
+        setTimeout(drawLines(), 3000);
+        setTimeout(drawTriangles(), 3000);
+    }
+}
+
 // Create and bind vertex buffer
 var vertexBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
